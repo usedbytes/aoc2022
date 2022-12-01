@@ -15,5 +15,5 @@ fi
 export D=${DIR}/${DAY}
 
 mkdir ${D}
-cp -n ${DIR}/template.go ${D}
+cp -n ${DIR}/template.go ${D}/puzzle.go
 cd ${D}
