@@ -59,3 +59,17 @@ for v in dirs.values():
     if v < 100000:
         totals.append(v)
 print("Part 1:", sum(totals))
+
+total_size = 70000000
+total_needed = 30000000
+total_consumed = dirs[('',)]
+to_free = -((total_size - total_consumed) - total_needed)
+assert(to_free > 0)
+
+min_found = (('-',), total_size)
+for k, v in dirs.items():
+    if v < to_free:
+        continue
+    if v < min_found[1]:
+        min_found = (k, v)
+print("Part 2:", min_found[1])
