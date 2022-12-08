@@ -50,3 +50,39 @@ for col in range(ncols):
             height = tree
 
 print("Part 1:", len(visible))
+
+# Scenic scores
+scores = []
+for row in range(nrows):
+    scores.append([0] * ncols)
+    for col in range(ncols):
+        tree = grid[row][col]
+
+        dirs = [
+            [ 1,  0], # Eastwards
+            [-1,  0], # Westwards
+            [ 0, -1], # Northwards
+            [ 0,  1], # Southwards
+        ]
+
+        score = 1
+        for d in dirs:
+            col2 = col
+            row2 = row
+            i = 0
+            while True:
+                col2 += d[0]
+                row2 += d[1]
+                if col2 < 0 or col2 > (ncols - 1):
+                    break
+                if row2 < 0 or row2 > (nrows - 1):
+                    break
+
+                i += 1
+
+                if grid[row2][col2] >= tree:
+                    break
+            score *= i
+        scores[row][col] = score
+
+print("Part 2:", max([max(row) for row in scores]))
