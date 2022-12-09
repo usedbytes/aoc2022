@@ -11,6 +11,30 @@ dirs = {
 hpos = (0,0)
 knots = [(0,0) for i in range(9)]
 
+def dump_knots(hpos, knots):
+    print(knots)
+    pts = [(0,0)]
+    pts.extend(knots)
+    pts.extend([hpos])
+
+    print("")
+    minx = min([v[0] for v in pts])
+    maxx = max([v[0] for v in pts])
+    miny = min([v[1] for v in pts])
+    maxy = max([v[1] for v in pts])
+    xr = (maxx - minx) + 1
+    yr = (maxy - miny) + 1
+
+    grid = [['.'] * xr for i in range(yr + 1)]
+    grid[0 - miny][0 - minx] = 's'
+    grid[hpos[1] - miny][hpos[0] - minx] = 'H'
+    for i in range(len(knots)):
+        k = knots[i]
+        grid[k[1] - miny][k[0] - minx] = str(i + 1)
+
+    for row in grid:
+        print(' '.join(row))
+
 p1 = {}
 p2 = {}
 with open(sys.argv[1]) as f:
@@ -56,6 +80,10 @@ with open(sys.argv[1]) as f:
 
             p1[knots[0]] = True
             p2[knots[-1]] = True
+
+        if len(sys.argv) > 2:
+            dump_knots(hpos, knots)
+
 
 print("Part 1:", len(p1))
 print("Part 2:", len(p2))
