@@ -60,30 +60,28 @@ with open(sys.argv[1]) as f:
                 if diff[0] < -1:
                     dx = -1
                     if diff[1] != 0:
-                        dy = diff[1]
+                        dy = diff[1] // abs(diff[1])
                 elif diff[0] > 1:
                     dx = 1
                     if diff[1] != 0:
-                        dy = diff[1]
-
-                if diff[1] < -1:
+                        dy = diff[1] // abs(diff[1])
+                elif diff[1] < -1:
                     dy = -1
                     if diff[0] != 0:
-                        dx = diff[0]
+                        dx = diff[0] // abs(diff[0])
                 elif diff[1] > 1:
                     dy = 1
                     if diff[0] != 0:
-                        dx = diff[0]
+                        dx = diff[0] // abs(diff[0])
 
                 knots[i] = (knot[0] + dx, knot[1] + dy)
                 kif = knots[i]
 
+            if len(sys.argv) > 2:
+                dump_knots(hpos, knots[:i+1])
+
             p1[knots[0]] = True
             p2[knots[-1]] = True
-
-        if len(sys.argv) > 2:
-            dump_knots(hpos, knots)
-
 
 print("Part 1:", len(p1))
 print("Part 2:", len(p2))
