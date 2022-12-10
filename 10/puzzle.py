@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import sys
 
-def run(lines, inspect):
+def run(lines, cycle_consumers):
     cycle = 1
     X = 1
 
     for line in lines:
-        if cycle in inspect:
-            inspect[cycle] = X
+        for c in cycle_consumers:
+            c(cycle, X)
 
         if line == "noop":
             cycle += 1
@@ -15,12 +15,13 @@ def run(lines, inspect):
             _, count = line.split()
             count = int(count)
             cycle += 1
-            if cycle in inspect:
-                inspect[cycle] = X
+            for c in cycle_consumers:
+                c(cycle, X)
             cycle += 1
             X += count
-    if cycle in inspect:
-        inspect[cycle] = X
+
+    for c in cycle_consumers:
+        c(cycle, X)
 
 lines = []
 with open(sys.argv[1]) as f:
@@ -28,12 +29,25 @@ with open(sys.argv[1]) as f:
         line = line.strip()
         lines.append(line)
 
-inspect = {}
-for i in range(20, 220+1, 40):
-    print(i)
-    inspect[i] = 0
+part1 = {}
+def part1_consumer(cycle, X):
+    if cycle in range(20, 220+1, 40):
+        part1[cycle] = X
 
-run(lines, inspect)
+part2 = []
+def part2_consumer(cycle, X):
+    if cycle in range(1, 240+1, 40):
+        part2.append(['.'] * 40)
 
-strength = sum([k * v for k, v in inspect.items()])
+    crt_pos = (cycle - 1)  % 40
+    if crt_pos in [X-1, X, X+1]:
+        part2[-1][crt_pos] = '#'
+
+run(lines, [part1_consumer, part2_consumer])
+
+strength = sum([k * v for k, v in part1.items()])
 print("Part 1:", strength)
+
+print("Part 2:")
+for row in part2:
+    print(''.join(row))
