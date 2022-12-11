@@ -7,9 +7,11 @@ monkey_divs = []
 monkey_throws = []
 monkey_inspections = []
 
+big_N = 1
+
 lines = []
 
-def do_one(i):
+def do_one(i, do_div = True):
     item = monkey_items[i].pop(0)
 
     op = monkey_ops[i]
@@ -31,8 +33,12 @@ def do_one(i):
 
     monkey_inspections[i] += 1
 
-    # Reduce worry level
-    item = item // 3
+
+    if do_div:
+        # Reduce worry level
+        item = item // 3
+    else:
+        item = item % big_N
 
     if item % monkey_divs[i] == 0:
         monkey_items[monkey_throws[i][0]].append(item)
@@ -84,17 +90,20 @@ while i < len(lines):
             line = line[len("Test: divisible by "):]
             monkey_divs.append(int(line))
 
+            big_N *= int(line)
+
             if_true = lines[i+1].split()[-1]
             if_false = lines[i+2].split()[-1]
             monkey_throws.append((int(if_true), int(if_false)))
             i += 2
         i += 1
 
-for rnd in range(20):
+
+for rnd in range(10000 if len(sys.argv) > 2 else 20):
     for i in range(len(monkey_items)):
         nitems = len(monkey_items[i])
         for j in range(nitems):
-            do_one(i)
+            do_one(i, False if len(sys.argv) > 2 else True)
 
 monkey_inspections.sort()
 monkey_business = monkey_inspections[-1] * monkey_inspections[-2]
