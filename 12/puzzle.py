@@ -33,6 +33,7 @@ nrows = len(grid)
 ncols = len(grid[0])
 
 paths = {}
+goals = []
 
 def visit(pos, path):
     if (pos in paths) and len(paths[pos]) <= len(path):
@@ -40,6 +41,9 @@ def visit(pos, path):
 
     paths[pos] = path
     cur_height = grid_v(pos)
+
+    if (cur_height == 0) and (pos not in goals):
+        goals.append(pos)
 
     nexts = []
 
@@ -71,3 +75,5 @@ while len(to_visit) > 0:
     to_visit.extend(visit(pos, path))
 
 print("Part 1:", len(paths[start]))
+
+print("Part 2:", min([len(paths[g]) for g in goals]))
