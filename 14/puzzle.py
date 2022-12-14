@@ -24,9 +24,13 @@ with open(sys.argv[1]) as f:
             poly.append((x, y))
         polylines.append(poly)
 
-# Expand by 1 to allow the sand to fall off
-minx -= 1
-maxx += 1
+# HAX: Just expand by a huge amount to try and not run out of space
+minx -= 300
+maxx += 300
+
+if len(sys.argv) > 2:
+    maxy += 2
+    polylines.append([(minx, maxy), (maxx, maxy)])
 
 nx = maxx - minx + 1
 ny = maxy - miny + 1
@@ -69,6 +73,8 @@ while True:
     while True:
         if pos[1] >= maxy:
             break
+        elif len(sys.argv) > 2 and pos[1] >= maxy - 1:
+            break
         elif grid_v((pos[0], pos[1]+1)) == '.':
             pos = (pos[0], pos[1]+1)
         elif grid_v((pos[0]-1, pos[1]+1)) == '.':
@@ -80,8 +86,14 @@ while True:
     grid_set(pos, 'o')
     if pos[1] >= maxy:
         break
+    if pos == (500, 0):
+        break
 
 for row in grid:
     print(''.join(row))
 print('')
-print("Part 1:", i-1)
+
+if len(sys.argv) <= 2:
+    print("Part 1:", i-1)
+else:
+    print("Part 2:", i)
