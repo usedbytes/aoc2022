@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+from functools import cmp_to_key
 
 pairs = []
 
@@ -59,3 +60,26 @@ for i in range(len(pairs)):
         part1 += (i + 1)
 
 print("Part 1:", part1)
+
+packets = []
+for p in pairs:
+    packets.append(p[0])
+    packets.append(p[1])
+
+ordered = sorted(packets, key=cmp_to_key(compare))
+dividers = [
+    [[2]],
+    [[6]],
+]
+
+part2 = 1
+for d in dividers:
+    for i in range(len(ordered)):
+        p = ordered[i]
+        res = compare(d, p)
+        if res < 0:
+            part2 *= (i + 1)
+            ordered.insert(i, d)
+            break
+
+print("Part 2:", part2)
