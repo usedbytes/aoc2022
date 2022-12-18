@@ -49,3 +49,45 @@ for k, v in occupied.items():
             part1 += 1
 
 print("Part 1:", part1)
+
+touching_water = {}
+def touches_water(pos, visited = []):
+    if pos in touching_water:
+        ans = touching_water[pos]
+        for v in visited:
+            touching_water[v] = ans
+        return ans
+
+    visited.append(pos)
+
+    if ((pos[0] < min_x) or (pos[0] > max_x) or
+        (pos[1] < min_y) or (pos[1] > max_y) or
+        (pos[2] < min_z) or (pos[2] > max_z)):
+        touching_water[pos] = True
+        for v in visited:
+            touching_water[v] = True
+        return True
+
+    for d in ds:
+        v = (pos[0] + d[0], pos[1] + d[1], pos[2] + d[2])
+        if v in visited:
+            continue
+
+        if v in occupied:
+            continue
+
+        if touches_water(v, visited.copy()):
+            return True
+
+    for v in visited:
+        touching_water[v] = False
+    return False
+
+part2 = 0
+for k, v in occupied.items():
+    for d in ds:
+        pos = (k[0] + d[0], k[1] + d[1], k[2] + d[2])
+        if pos not in occupied and touches_water(pos, []):
+            part2 += 1
+
+print("Part 2:", part2)
