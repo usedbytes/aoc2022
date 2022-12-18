@@ -24,64 +24,71 @@ with open(sys.argv[1]) as f:
         line = line.strip()
         jets = line
 
-
 rock_idx = 0
 jet_idx = 0
 
-floor = [0] * 7
+# For the record, I'm assuming that this won't scale to Part 2
+occupied = {
+    (0, 0): True,
+    (1, 0): True,
+    (2, 0): True,
+    (3, 0): True,
+    (4, 0): True,
+    (5, 0): True,
+    (6, 0): True,
+}
 
+def update_position(rock, pos):
+    new_pos = []
+    for cell in rock:
+        new_pos.append((pos[0] + cell[0], pos[1] + cell[1]))
+    return new_pos
+
+max_y = 0
 j = 0
 for i in range(2022):
-    y = max(floor) + 4
+    y = max_y + 4
     x = 2
-    rock = rocks[i % len(rocks)] 
 
-    print("Rock", i)
     settled = False
     while not settled:
+        rock = update_position(rocks[i % len(rocks)], (x, y))
+
         # First knocked by jet
         jet = jets[j % len(jets)]
         j += 1
         if jet == '>':
             blocked = False
             for cell in rock:
-                pos = (x + cell[0], y + cell[1])
-                if pos[0] > 5 or floor[pos[0]+1] >= pos[1]:
+                if cell[0] > 5 or (cell[0]+1, cell[1]) in occupied:
                     blocked = True
             if blocked:
-                print("right blocked")
                 pass
             else:
-                print("right ok")
                 x += 1
         elif jet == '<':
             blocked = False
             for cell in rock:
-                pos = (x + cell[0], y + cell[1])
-                if pos[0] < 1 or floor[pos[0]-1] >= pos[1]:
+                if cell[0] < 1 or (cell[0]-1, cell[1]) in occupied:
                     blocked = True
             if blocked:
-                print("left blocked")
                 pass
             else:
-                print("left ok")
                 x -= 1
+
+        rock = update_position(rocks[i % len(rocks)], (x, y))
 
         # Then fall
         for cell in rock:
-            pos = (x + cell[0], y + cell[1])
-            print(floor, pos)
-            if floor[pos[0]] == (pos[1] - 1):
+            if (cell[0], cell[1]-1) in occupied:
                 settled = True
                 break
 
         if settled:
-            #print("fall blocked")
             for cell in rock:
-                pos = (x + cell[0], y + cell[1])
-                floor[pos[0]] = max(floor[pos[0]], pos[1])
+                occupied[cell] = True
+                if cell[1] > max_y:
+                    max_y = cell[1]
         else:
             y -= 1
-            #print("fall ok")
-    print("settled", floor)
-print("Part 1:", max(floor))
+print("Part 1:", max_y)
