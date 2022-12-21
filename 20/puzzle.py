@@ -8,20 +8,23 @@ with open(sys.argv[1]) as f:
         items.append(int(line))
 
 def transform(idx, src, amt, l):
-    #amt = amt % l
+    # If we jump more times than there are entries, then there's
+    # one fewer entry in the list while we're jumping
+    if abs(amt) > l:
+        amt = amt % (l - 1)
 
     dst = (src + amt) % l
 
-    # Account for shifting of "jumped" numbers
+    # Account for entries shifting when wrapping
+    if dst > src and amt < 0:
+        dst -= 1
     if dst < src and amt > 0:
         dst += 1
-    elif dst > src and amt < 0:
-        dst -= 1
 
-    if src > idx and dst <= idx:
-        return (idx + 1) % l
-    elif src < idx and dst >= idx:
+    if idx > src and idx <= dst:
         return (idx - 1) % l
+    if idx < src and idx >= dst:
+        return (idx + 1) % l
     elif src == idx:
         return dst
     else:
@@ -30,7 +33,6 @@ def transform(idx, src, amt, l):
 idx_now = [i for i, _ in enumerate(items)]
 state = items.copy()
 
-print(state)
 for i, v in enumerate(items):
     # Move the number which started at index 'i' by its value: 'v'
     #print(f'move v{v}')
