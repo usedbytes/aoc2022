@@ -23,7 +23,7 @@ def transform(idx, src, amt, l):
 
     if idx > src and idx <= dst:
         return (idx - 1) % l
-    if idx < src and idx >= dst:
+    elif idx < src and idx >= dst:
         return (idx + 1) % l
     elif src == idx:
         return dst
@@ -33,27 +33,37 @@ def transform(idx, src, amt, l):
 idx_now = [i for i, _ in enumerate(items)]
 state = items.copy()
 
+rounds = 1
+key = 1
+if len(sys.argv) > 2:
+    rounds = 10
+    key = 811589153
+
 for i, v in enumerate(items):
-    # Move the number which started at index 'i' by its value: 'v'
-    #print(f'move v{v}')
+    items[i] = v * key
 
-    # Where is that number now?
-    now_i = idx_now[i]
-    #print(f'v{v} is currently at i{now_i}')
+for _ in range(rounds):
+    for i, v in enumerate(items):
+        # Move the number which started at index 'i' by its value: 'v'
+        #print(f'move v{v}')
 
-    idx_next = idx_now.copy()
-    for orig_j, now_j in enumerate(idx_now):
-        # Take the item that's currently at index 'now_j' and find its new
-        # position, given that 'now_i' is moving by 'v'
-        new_j = transform(now_j, now_i, v, len(state))
+        # Where is that number now?
+        now_i = idx_now[i]
+        #print(f'v{v} is currently at i{now_i}')
 
-        # Store its new position
-        idx_next[orig_j] = new_j
+        idx_next = idx_now.copy()
+        for orig_j, now_j in enumerate(idx_now):
+            # Take the item that's currently at index 'now_j' and find its new
+            # position, given that 'now_i' is moving by 'v'
+            new_j = transform(now_j, now_i, v, len(state))
 
-        #print(f'(v{items[orig_j]}) i{now_j} -> i{new_j}')
+            # Store its new position
+            idx_next[orig_j] = new_j
 
-    # Apply it
-    idx_now = idx_next
+            #print(f'(v{items[orig_j]}) i{now_j} -> i{new_j}')
+
+        # Apply it
+        idx_now = idx_next
 
 assert(len(set(idx_now)) == len(idx_now))
 
@@ -68,16 +78,15 @@ print(f'zero was {zero_idx}, now {zero_now}')
 a = state[(zero_now + 1000) % len(items)]
 b = state[(zero_now + 2000) % len(items)]
 c = state[(zero_now + 3000) % len(items)]
-part1 = a + b + c
-print(f'{a} + {b} + {c} = {part1}')
+res = a + b + c
+print(f'{a} + {b} + {c} = {res}')
 
-print("Part 1:", part1)
+print("Result:", res)
 
+exit()
 
-assert(False)
 
 moves = []
-
 
 memo = {}
 
