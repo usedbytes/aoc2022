@@ -89,3 +89,43 @@ while len(path) > 0:
         facing = cur
 
 print("Part 1:", (1000 * (r + 1)) + (4 * (c + 1)) + facing)
+
+# Find the cube side length
+min_w = len(grid)
+max_len = 0
+for line in grid:
+    n_cells = len(line) - line.count(' ')
+    min_w = min(min_w, n_cells)
+    max_len = max(max_len, len(line))
+
+for c in range(max_len):
+    n_cells = 0
+    for r in range(len(grid)):
+        line = grid[r]
+        if c < len(line) and line[c] != ' ':
+            n_cells += 1
+    min_w = min(min_w, n_cells)
+
+sides = {}
+side_coords = []
+
+print("min_w:", min_w)
+side_length = min_w
+for r in range(0, len(grid), side_length):
+    for c in range(0, max_len, side_length):
+        print((c, r))
+        line = grid[r]
+        print(line, len(line))
+        print(' ' * c + '^')
+        if c <= (len(line) - side_length) and line[c] != ' ':
+            side = [grid[r + i][c:c+side_length] for i in range(side_length)]
+            x = c // side_length
+            y = r // side_length
+            sides[(x, y)] = side
+            side_coords.append((x, y))
+            print(f'Add side {(x, y)}')
+            for line in side:
+                print(line)
+
+assert(len(sides) == 6)
+print(sides.keys())
