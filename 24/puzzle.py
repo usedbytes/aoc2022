@@ -66,33 +66,41 @@ dirs = [
     (0, 0),
 ]
 
-to_visit = [(start, [])]
+def find_path(blizzards, a, b):
+    to_visit = [(a, [])]
 
-while True and len(to_visit) > 0:
-    blizzards = move_blizzards(blizzards)
-    next_visit = {}
-    for v, p in to_visit:
-        for d in dirs:
-            pos = (v[0] + d[0], v[1] + d[1])
+    while True and len(to_visit) > 0:
+        blizzards = move_blizzards(blizzards)
+        next_visit = {}
+        for v, p in to_visit:
+            for d in dirs:
+                pos = (v[0] + d[0], v[1] + d[1])
 
-            if pos == end:
-                print("Part 1:", len(p) + 1)
-                exit()
+                if pos == b:
+                    return (p, blizzards)
 
-            if (pos != (0, -1)) and (pos[0] < 0 or pos[1] < 0):
-                continue
+                if (pos != start) and (pos[0] < 0 or pos[1] < 0):
+                    continue
 
-            if pos[0] > end[0] or pos[1] > end[1] - 1:
-                continue
+                if (pos != end) and (pos[0] > end[0] or pos[1] > end[1] - 1):
+                    continue
 
-            if pos in blizzards:
-                continue
+                if pos in blizzards:
+                    continue
 
-            path = p.copy()
-            path.append(pos)
-            cur_best = next_visit.get(pos, None)
-            if cur_best is None or len(path) < len(cur_best):
-                next_visit[pos] = path
+                path = p.copy()
+                path.append(pos)
+                cur_best = next_visit.get(pos, None)
+                if cur_best is None or len(path) < len(cur_best):
+                    next_visit[pos] = path
 
-    to_visit = [(k, v) for k, v in next_visit.items()]
+        to_visit = [(k, v) for k, v in next_visit.items()]
+    assert(False)
 
+p1, b1 = find_path(blizzards, start, end)
+print("Part 1:", len(p1)+1)
+
+p2, b2 = find_path(b1, end, start)
+
+p3, b3 = find_path(b2, start, end)
+print("Part 2:", len(p1) + len(p2) + len(p3) + 3)
