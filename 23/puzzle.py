@@ -36,7 +36,7 @@ def propose(pos, move_num):
             has_adjacent = True
             break
     if not has_adjacent:
-        return pos
+        return pos, False
 
     for dir_num in range(len(dirs)):
         checks = dirs[(move_num + dir_num) % len(dirs)]
@@ -47,12 +47,18 @@ def propose(pos, move_num):
                 should_move = False
                 break
         if should_move:
-            return (pos[0] + checks[0][0], pos[1] + checks[0][1])
+            return (pos[0] + checks[0][0], pos[1] + checks[0][1]), True
 
-for move in range(10):
+    return pos, False
+
+move = 0
+while True:
+    moved = False
     proposals = {}
     for e in elves:
-        p = propose(e, move)
+        p, em = propose(e, move)
+        moved = moved or em
+
         if p in proposals:
             proposals[p].append(e)
         else:
@@ -67,17 +73,25 @@ for move in range(10):
                 new_elves[e] = True
     elves = new_elves
 
-min_x = None
-min_y = None
-max_x = 0
-max_y = 0
-for e in elves:
-    if min_x is None or e[0] < min_x:
-        min_x = e[0]
-    if min_y is None or e[1] < min_y:
-        min_y = e[1]
-    max_x = max(max_x, e[0])
-    max_y = max(max_y, e[1])
-ntiles = (max_x - min_x + 1) * (max_y - min_y + 1)
+    if move == 9:
+        min_x = None
+        min_y = None
+        max_x = 0
+        max_y = 0
+        for e in elves:
+            if min_x is None or e[0] < min_x:
+                min_x = e[0]
+            if min_y is None or e[1] < min_y:
+                min_y = e[1]
+            max_x = max(max_x, e[0])
+            max_y = max(max_y, e[1])
+        ntiles = (max_x - min_x + 1) * (max_y - min_y + 1)
 
-print("Part 1:", ntiles - len(elves))
+        print("Part 1:", ntiles - len(elves))
+
+    move += 1
+
+    if not moved:
+        break
+
+print("Part 2:", move)
